@@ -20,20 +20,28 @@ const signUp = async (req, res) => {
         res.status(404).send({ message: 'Las contraseñas son obligatorio.' });
     } else {
         if (password !== repeatPassword) {
-            res.status(404).send({ message: 'Las contraseñas tiene que ser iguales.' });
+            res.status(404).send({
+                message: 'Las contraseñas tiene que ser iguales.',
+            });
         } else {
             await bcrypt.hash(password, saltRounds, function (err, hash) {
                 if (err) {
-                    res.status(500).send({ message: 'Error al encriptar las contraseñas.' });
+                    res.status(500).send({
+                        message: 'Error al encriptar las contraseñas.',
+                    });
                 } else {
                     user.password = hash;
 
                     user.save((err, userStored) => {
                         if (err) {
-                            res.status(500).send({ message: 'El usuario ya existe.' });
+                            res.status(500).send({
+                                message: 'El usuario ya existe.',
+                            });
                         } else {
                             if (!userStored) {
-                                res.status(404).send({ message: 'Error al crear usuario.' });
+                                res.status(404).send({
+                                    message: 'Error al crear usuario.',
+                                });
                             } else {
                                 res.status(200).send({ user: userStored });
                             }
@@ -57,25 +65,37 @@ const signIn = (req, res) => {
             if (!userStored) {
                 res.status(404).send({ message: 'Usuario no encontrado.' });
             } else {
-                bcrypt.compare(password, userStored.password, function (err, check) {
-                    if (err) {
-                        res.status(500).send({ message: 'Error del servidor.' });
-                    } else if (!check) {
-                        res.status(404).send({ message: 'La contraseña es incoreccta' });
-                    } else {
-                        if (!userStored.active) {
-                            res.status(200).send({
-                                code: 200,
-                                message: 'El usuario no se ha activado.',
+                bcrypt.compare(
+                    password,
+                    userStored.password,
+                    function (err, check) {
+                        if (err) {
+                            res.status(500).send({
+                                message: 'Error del servidor.',
+                            });
+                        } else if (!check) {
+                            res.status(404).send({
+                                message: 'La contraseña es incoreccta',
                             });
                         } else {
-                            res.status(200).send({
-                                accessToken: jwt.createAccessToken(userStored),
-                                refreshToken: jwt.createRefreshToken(userStored),
-                            });
+                            if (!userStored.active) {
+                                res.status(200).send({
+                                    code: 200,
+                                    message: 'El usuario no se ha activado.',
+                                });
+                            } else {
+                                res.status(200).send({
+                                    accessToken: jwt.createAccessToken(
+                                        userStored
+                                    ),
+                                    refreshToken: jwt.createRefreshToken(
+                                        userStored
+                                    ),
+                                });
+                            }
                         }
                     }
-                });
+                );
             }
         }
     });
@@ -84,7 +104,9 @@ const signIn = (req, res) => {
 const getUsers = (req, res) => {
     User.find().then((users) => {
         if (!users) {
-            res.status(404).send({ message: 'No se ha encontrado ningun usuario' });
+            res.status(404).send({
+                message: 'No se ha encontrado ningun usuario',
+            });
         } else {
             res.status(200).send({ users });
         }
@@ -96,7 +118,9 @@ const getUsersActive = (req, res) => {
 
     User.find({ active: query.active }).then((users) => {
         if (!users) {
-            res.status(404).send({ message: 'No se ha encontrado ningun usuario' });
+            res.status(404).send({
+                message: 'No se ha encontrado ningun usuario',
+            });
         } else {
             res.status(200).send({ users });
         }
@@ -111,7 +135,9 @@ function uploadAvatar(req, res) {
             res.status(500).send({ message: 'Error del servidor.' });
         } else {
             if (!userData) {
-                res.status(404).send({ message: 'No se ha encontrado ningun usuario.' });
+                res.status(404).send({
+                    message: 'No se ha encontrado ningun usuario.',
+                });
             } else {
                 let user = userData;
 
@@ -130,19 +156,28 @@ function uploadAvatar(req, res) {
                         });
                     } else {
                         user.avatar = fileName;
-                        User.findByIdAndUpdate({ _id: params.id }, user, (err, userResult) => {
-                            if (err) {
-                                res.status(500).send({ message: 'Error del servidor' });
-                            } else {
-                                if (!userResult) {
-                                    res.status(404).send({
-                                        message: 'No se ha encontrado ningun usuario',
+                        User.findByIdAndUpdate(
+                            { _id: params.id },
+                            user,
+                            (err, userResult) => {
+                                if (err) {
+                                    res.status(500).send({
+                                        message: 'Error del servidor',
                                     });
                                 } else {
-                                    res.status(200).send({ avatarName: fileName });
+                                    if (!userResult) {
+                                        res.status(404).send({
+                                            message:
+                                                'No se ha encontrado ningun usuario',
+                                        });
+                                    } else {
+                                        res.status(200).send({
+                                            avatarName: fileName,
+                                        });
+                                    }
                                 }
                             }
-                        });
+                        );
                     }
                 }
             }
@@ -169,39 +204,57 @@ const updateUser = async (req, res) => {
     if (userData.password) {
         await bcrypt.hash(userData.password, saltRounds, function (err, hash) {
             if (err) {
-                res.status(500).send({ message: 'Error al encriptar la contraseña' });
+                res.status(500).send({
+                    message: 'Error al encriptar la contraseña',
+                });
             } else {
                 userData.password = hash;
 
-                User.findByIdAndUpdate({ _id: params.id }, userData, (err, userUpdate) => {
-                    if (err) {
-                        res.status(500).send({ message: 'Error del servidor' });
-                    } else {
-                        if (!userUpdate) {
-                            res.status(404).send({
-                                message: 'No se ha encontrado ningun usuario.',
+                User.findByIdAndUpdate(
+                    { _id: params.id },
+                    userData,
+                    (err, userUpdate) => {
+                        if (err) {
+                            res.status(500).send({
+                                message: 'Error del servidor',
                             });
                         } else {
-                            res.status(200).send({ message: 'Usuario actualizado correctamente' });
+                            if (!userUpdate) {
+                                res.status(404).send({
+                                    message:
+                                        'No se ha encontrado ningun usuario.',
+                                });
+                            } else {
+                                res.status(200).send({
+                                    message:
+                                        'Usuario actualizado correctamente',
+                                });
+                            }
                         }
                     }
-                });
+                );
             }
         });
     } else {
-        User.findByIdAndUpdate({ _id: params.id }, userData, (err, userUpdate) => {
-            if (err) {
-                res.status(500).send({ message: 'Error del servidor' });
-            } else {
-                if (!userUpdate) {
-                    res.status(404).send({
-                        message: 'No se ha encontrado ningun usuario.',
-                    });
+        User.findByIdAndUpdate(
+            { _id: params.id },
+            userData,
+            (err, userUpdate) => {
+                if (err) {
+                    res.status(500).send({ message: 'Error del servidor' });
                 } else {
-                    res.status(200).send({ message: 'Usuario actualizado correctamente' });
+                    if (!userUpdate) {
+                        res.status(404).send({
+                            message: 'No se ha encontrado ningun usuario.',
+                        });
+                    } else {
+                        res.status(200).send({
+                            message: 'Usuario actualizado correctamente',
+                        });
+                    }
                 }
             }
-        });
+        );
     }
 };
 
@@ -214,12 +267,18 @@ function activateUser(req, res) {
             res.status(500).send({ message: 'Error del servidor.' });
         } else {
             if (!userStored) {
-                res.status(404).send({ message: 'No se ha encontrado el usuario.' });
+                res.status(404).send({
+                    message: 'No se ha encontrado el usuario.',
+                });
             } else {
                 if (active === true) {
-                    res.status(200).send({ message: 'Usuario activado correctamente.' });
+                    res.status(200).send({
+                        message: 'Usuario activado correctamente.',
+                    });
                 } else {
-                    res.status(200).send({ message: 'Usuario desactivado correctamente.' });
+                    res.status(200).send({
+                        message: 'Usuario desactivado correctamente.',
+                    });
                 }
             }
         }
@@ -234,9 +293,13 @@ function deleteUser(req, res) {
             res.status(500).send({ message: 'Error del servidor.' });
         } else {
             if (!userDelete) {
-                res.status(404).send({ message: 'No se ha encontrado el usuario.' });
+                res.status(404).send({
+                    message: 'No se ha encontrado el usuario.',
+                });
             } else {
-                res.status(200).send({ message: 'Usuario eliminado correctamente.' });
+                res.status(200).send({
+                    message: 'Usuario eliminado correctamente.',
+                });
             }
         }
     });
@@ -258,19 +321,26 @@ function signUpAdmin(req, res) {
     } else {
         bcrypt.hash(password, saltRounds, function (err, hash) {
             if (err) {
-                res.status(500).send({ message: 'Error al encriptar la contraseña.' });
+                res.status(500).send({
+                    message: 'Error al encriptar la contraseña.',
+                });
             } else {
                 user.password = hash;
 
                 user.save((err, userStored) => {
                     if (err) {
-                        res.status(500).send({ message: 'El usuario ya existe.' });
+                        res.status(500).send({
+                            message: 'El usuario ya existe.',
+                        });
                     } else {
                         if (!userStored) {
-                            res.status(500).send({ message: 'Error al crear el nuevo usuario.' });
+                            res.status(500).send({
+                                message: 'Error al crear el nuevo usuario.',
+                            });
                         } else {
                             res.status(200).send({
-                                message: 'El usuario se ha creado correctamente.',
+                                message:
+                                    'El usuario se ha creado correctamente.',
                             });
                         }
                     }

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
-const User = require('./user');
 
 const Schema = mongoose.Schema;
 
@@ -11,7 +10,10 @@ const PostSchema = Schema({
         unique: true,
     },
     description: String,
+    briefDescription: String,
     date: Date,
+    active: Boolean,
+    image: String,
     user: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 

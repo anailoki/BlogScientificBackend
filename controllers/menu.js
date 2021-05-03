@@ -1,4 +1,3 @@
-const menu = require('../models/menu');
 const Menu = require('../models/menu');
 
 function addMenu(req, res) {
@@ -30,7 +29,10 @@ function getMenus(req, res) {
                 res.status(500).send({ message: 'Error del servidor.' });
             } else {
                 if (!menuStored) {
-                    res.status(404).send({ message: 'No se ha encontrado ningun elemento en el menu.' });
+                    res.status(404).send({
+                        message:
+                            'No se ha encontrado ningun elemento en el menu.',
+                    });
                 } else {
                     res.status(200).send({ menu: menuStored });
                 }
@@ -47,9 +49,13 @@ function updatedMenu(req, res) {
             res.status(500).send({ message: 'Error del servidor.' });
         } else {
             if (!menuUpdated) {
-                res.status(404).send({ message: 'No se ha encontrado ningun menu.' });
+                res.status(404).send({
+                    message: 'No se ha encontrado ningun menu.',
+                });
             } else {
-                res.status(200).send({ message: 'Menu actualizado correctamente' });
+                res.status(200).send({
+                    message: 'Menu actualizado correctamente',
+                });
             }
         }
     });
@@ -67,9 +73,13 @@ function activateMenu(req, res) {
             res.status(404).send({ message: 'No se ha encontrado el menu.' });
         } else {
             if (active === true) {
-                res.status(200).send({ message: 'Menu activado correctamente.' });
+                res.status(200).send({
+                    message: 'Menu activado correctamente.',
+                });
             } else {
-                res.status(200).send({ message: 'Menu desactivado correctamente.' });
+                res.status(200).send({
+                    message: 'Menu desactivado correctamente.',
+                });
             }
         }
     });
@@ -83,9 +93,13 @@ function deleteMenu(req, res) {
             res.status(500).send({ message: 'Error del servidor.' });
         } else {
             if (!menuDeleted) {
-                res.status(404).send({ message: 'No se ha encontrado el menu.' });
+                res.status(404).send({
+                    message: 'No se ha encontrado el menu.',
+                });
             } else {
-                res.status(200).send({ message: 'El menu ha sido eliminado correctamente.' });
+                res.status(200).send({
+                    message: 'El menu ha sido eliminado correctamente.',
+                });
             }
         }
     });

@@ -45,6 +45,26 @@ function suscribeEmail(req, res) {
     }
 }
 
+function getUserSuscribed(req, res) {
+    Newsletter.find().exec((err, newsletterStored) => {
+        if (err) {
+            res.status(500).send({ message: 'Error del servidor.' });
+        } else {
+            if (!newsletterStored) {
+                res.status(404).send({
+                    message: 'No se ha encontrado ningun elemento en el menu.',
+                });
+            } else {
+                res.status(200).send({
+                    code: 200,
+                    newsletter: newsletterStored,
+                });
+            }
+        }
+    });
+}
+
 module.exports = {
     suscribeEmail,
+    getUserSuscribed,
 };

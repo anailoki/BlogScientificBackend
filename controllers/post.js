@@ -69,7 +69,6 @@ const getPosts = async (req, res) => {
     } else {
         desde = (page - 1) * limite;
     }
-    // const query = { date: 'desc' };
 
     const [total, posts] = await Promise.all([
         Post.countDocuments(),
